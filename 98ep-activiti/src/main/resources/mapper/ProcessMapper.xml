@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ep.activiti.mapper.ProcessMapper">
+	<resultMap type="com.ep.activiti.entity.UserProcess" id="userProcess">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+		<result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+		<result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+		<result property="startTime" column="START_TIME_" jdbcType="TIME" />
+		<result property="endTime" column="END_TIME_" jdbcType="TIME" />
+		<result property="startUser" column="START_USER_ID_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getAllProcessStartByUser" resultMap="userProcess"
+		parameterType="string">
+		select
+			p.ID_,
+			p.PROC_INST_ID_,
+			p.BUSINESS_KEY_,
+			p.PROC_DEF_ID_,
+			DATE_FORMAT(p.START_TIME_,'%Y-%m-%d %T') as START_TIME_,
+			DATE_FORMAT(p.END_TIME_,'%Y-%m-%d %T') as END_TIME_,
+			p.START_USER_ID_
+		from
+			act_hi_procinst p
+		where
+			p.START_USER_ID_ = ${value} and p.DELETE_REASON_ is null
+		ORDER BY 
+			p.START_TIME_ DESC
+	</select>
+	
+	<select id="getProcessByProId" resultMap="userProcess"
+		parameterType="string">
+		select
+			p.ID_,
+			p.PROC_INST_ID_,
+			p.BUSINESS_KEY_,
+			p.PROC_DEF_ID_,
+			p.START_TIME_,
+			p.END_TIME_,
+			p.START_USER_ID_
+		from
+			act_hi_procinst p
+		where
+			p.PROC_INST_ID_ = ${value}
+	</select>
+	
+	<select id="getProcessByBusiness" resultMap="userProcess">
+		select 
+			p.ID_,
+			p.PROC_INST_ID_,
+			p.BUSINESS_KEY_,
+			p.PROC_DEF_ID_,
+			p.START_TIME_,
+			p.END_TIME_,
+			p.START_USER_ID_
+		from
+			act_hi_procinst p
+		where 
+			p.BUSINESS_KEY_='${value}'
+		
+	</select>	
+</mapper>

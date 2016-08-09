@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ep.activiti.mapper.UserTaskMapper">
+	<resultMap type="com.ep.activiti.entity.UserTask" id="userTask">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<result property="createTime" column="CREATE_TIME_" typeHandler="com.ep.activiti.handlerUtil.TimestampToFormatStringHandler"/>
+		<result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+		<result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+		<result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+		<result property="assignee" column="ASSIGNEE_" jdbcType="VARCHAR" />
+		<result property="authenticatedUserId" column="START_USER_ID_" jdbcType="VARCHAR" />
+		<result property="modelName" column="RESOURCE_NAME_" jdbcType="VARCHAR"/>
+		<result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR"/>
+		<result property="taskDefinitionKey" column="TASK_DEF_KEY_" jdbcType="VARCHAR"/>
+		<result property="claimTime" column="CLAIM_TIME_" jdbcType="TIME"/>
+		<result property="modelKey" column="KEY_" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="getAllTask" resultMap="userTask">
+		select
+			t.ID_,
+			t.NAME_,
+			t.CREATE_TIME_,
+			t.PROC_DEF_ID_,
+			t.PROC_INST_ID_,
+			t.TENANT_ID_,
+			t.TASK_DEF_KEY_,
+			t.ASSIGNEE_,
+			p.BUSINESS_KEY_,
+			p.START_USER_ID_,
+			d.RESOURCE_NAME_,
+			d.KEY_,
+			h.CLAIM_TIME_
+		from 
+			act_ru_task t INNER JOIN
+			act_hi_procinst p on t.PROC_INST_ID_ = p.ID_ INNER JOIN
+			act_re_procdef d on t.PROC_DEF_ID_ = d.ID_ INNER JOIN
+			act_hi_taskinst h on t.ID_ = h.ID_ 
+		ORDER BY 
+			t.CREATE_TIME_ DESC
+	</select>
+	<select id="getPageUserTask" resultMap="userTask" parameterType="string">
+		select
+			t.ID_,
+			t.NAME_,
+			t.CREATE_TIME_,
+			t.PROC_DEF_ID_,
+			t.PROC_INST_ID_,
+			t.TENANT_ID_,
+			t.TASK_DEF_KEY_,
+			t.ASSIGNEE_,
+			p.BUSINESS_KEY_,
+			p.START_USER_ID_,
+			d.RESOURCE_NAME_,
+			d.KEY_,
+			h.CLAIM_TIME_
+		from 
+			act_ru_task t INNER JOIN
+			act_hi_procinst p on t.PROC_INST_ID_ = p.ID_ INNER JOIN
+			act_re_procdef d on t.PROC_DEF_ID_ = d.ID_ INNER JOIN
+			act_hi_taskinst h on t.ID_ = h.ID_ INNER JOIN
+			act_ru_identitylink i on i.TASK_ID_ = t.ID_
+		where
+			i.TYPE_ = 'candidate'
+		and 
+			i.USER_ID_ = ${value}
+		ORDER BY 
+			t.CREATE_TIME_ DESC
+	</select>
+</mapper>

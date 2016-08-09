@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ep.activiti.mapper.HistoricMapper">
+	<resultMap type="com.ep.activiti.entity.HisUserTask" id="hisUserTask">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+		<result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+		<result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<result property="assignee" column="ASSIGNEE_" jdbcType="VARCHAR" />
+		<result property="authenticatedUserId" column="START_USER_ID_" jdbcType="VARCHAR" />
+		<result property="createTime" column="START_TIME_" jdbcType="TIME" />
+		<result property="claimTime" column="CLAIM_TIME_" jdbcType="TIME" />
+		<result property="completeTime" column="END_TIME_" jdbcType="TIME" />
+		<result property="processEndTime" column="p_END_TIME_" jdbcType="TIME" />
+		<result property="description" column="TEXT_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getHisTaskByUser" resultMap="hisUserTask" parameterType="string">
+		select  
+			t.ID_,
+			t.PROC_DEF_ID_,
+			t.PROC_INST_ID_,
+			t.NAME_,
+			t.ASSIGNEE_,
+			DATE_FORMAT(t.START_TIME_,'%Y-%m-%d %T') as START_TIME_,
+			DATE_FORMAT(t.CLAIM_TIME_,'%Y-%m-%d %T') as CLAIM_TIME_,
+			DATE_FORMAT(t.END_TIME_,'%Y-%m-%d %T') as END_TIME_,
+			DATE_FORMAT(p.END_TIME_,'%Y-%m-%d %T') as p_END_TIME_,
+			p.BUSINESS_KEY_,
+			p.START_USER_ID_,
+			v.TEXT_
+		from
+			act_hi_procinst p INNER JOIN
+			act_hi_taskinst t on p.ID_ = t.PROC_INST_ID_ INNER JOIN
+			act_hi_varinst v on v.NAME_ = t.ID_
+		where 
+			t.ASSIGNEE_ = ${value}
+		ORDER BY 
+			t.START_TIME_ DESC
+	</select>
+</mapper>

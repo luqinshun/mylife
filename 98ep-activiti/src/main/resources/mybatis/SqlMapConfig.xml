@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<!-- 批量别名的设置 name:包名，不支持通配符   别名：即类名，不区分大小写 -->
+		<typeAlias type="com.ep.activiti.entity.CustomTask" alias="customTask"/>
+	</typeAliases>
+	<typeHandlers>
+		<typeHandler javaType="string" jdbcType="TIMESTAMP" handler="com.ep.activiti.handlerUtil.TimestampToFormatStringHandler"/>
+	</typeHandlers>
+	<!-- 加载映射文件 -->
+	<!-- <mappers>
+		批量加载映射文件    name:包名，不支持通配符
+		<package name="com.ep.activiti.mapper"/>
+	</mappers>-->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<property name="dialect" value="mysql" />
+			<!-- 设置为true时，使用RowBounds分页会进行count查询 -->
+			<property name="rowBoundsWithCount" value="true" />
+		</plugin>
+	</plugins>
+</configuration>
